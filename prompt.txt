@@ -1,0 +1,25 @@
+Create a single-file, self-contained HTML/CSS/vanilla JS Tic-Tac-Toe game with a modern pastel UI. The app must include:
+
+A visually appealing scoreboard showing X Wins, O Wins, and Draws.
+
+A responsive 3x3 game board with animated, rounded pastel-styled cells.
+
+Real-time status text indicating which player's turn it is, and clear win/draw messages.
+
+Detects wins via standard 8-pattern checks and handles draws correctly.
+
+Buttons for Replay (continue tracking scores) and Reset (clear scores and start fresh).
+
+Keyboard/accessibility sensible: focus styles, and board buttons accessible via tab.
+
+No external dependencies; all code contained in a single file.
+
+Ensure the UI uses:
+
+Pastel gradient background and soft card container with rounded corners.
+
+Buttons and cells with gentle gradients, shadows, and hover/focus states.
+
+A responsive layout that scales down gracefully on mobile.
+
+Provide the complete HTML file content, including embedded CSS and JavaScript, ready to drop into a single file and run in a browser. Include comments to explain key sections and logic where helpful.

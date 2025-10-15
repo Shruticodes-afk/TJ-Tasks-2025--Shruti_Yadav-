@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic-Tac-Toe | Modern Pastel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@700&family=Inter:wght@400;600&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Inter', 'Quicksand', Arial, sans-serif;
+      background: linear-gradient(135deg, #b7c5e6 0%, #fdd6e5 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 8px 32px rgba(80,112,136,0.08);
+      border-radius: 22px;
+      padding: 32px 28px 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 340px;
+    }
+    h1 {
+      font-family: 'Quicksand', Arial, sans-serif;
+      font-size: 2.2rem;
+      color: #5a6d9c;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-size: 1.15rem;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .score {
+      background: linear-gradient(90deg, #e5e6fa 0%, #ffe5ec 100%);
+      border-radius: 13px;
+      padding: 7px 18px;
+      box-shadow: 0 2px 8px rgba(170,165,188,0.06);
+      font-weight: 600;
+      color: #6e7c99;
+      text-align: center;
+      min-width: 80px;
+    }
+    .status {
+      margin-bottom: 18px;
+      font-size: 1.08rem;
+      color: #a77393;
+      font-weight: 600;
+      min-height: 24px;
+      text-align: center;
+      letter-spacing: 0.4px;
+    }
+    .board {
+      display: grid;
+      grid-template: repeat(3, 75px) / repeat(3, 75px);
+      gap: 13px;
+      margin-bottom: 21px;
+    }
+    .cell {
+      background: linear-gradient(120deg, #e1f2fb 20%, #fce2e0 100%);
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(196,182,216,0.14);
+      font-size: 1.85rem;
+      font-family: 'Quicksand', Arial, sans-serif;
+      font-weight: 700;
+      color: #8b8bb7;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.06s;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .cell:active {
+      transform: scale(0.98);
+    }
+    .cell.winning {
+      background: linear-gradient(120deg, #fad0c4 40%, #ffd1ff 100%);
+      color: #e55d87;
+      box-shadow: 0 2px 14px rgba(240,144,178,0.26);
+    }
+    .buttons {
+      display: flex;
+      gap: 18px;
+      margin-top: 6px;
+    }
+    button {
+      padding: 9px 22px;
+      background: linear-gradient(90deg, #c2e9fb 0%, #e0c3fc 100%);
+      color: #7f6291;
+      border: none;
+      border-radius: 13px;
+      font-size: 1rem;
+      font-family: 'Inter', Arial, sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.08s;
+      box-shadow: 0 2px 8px rgba(185,192,210,0.12);
+    }
+    button:hover, button:focus {
+      background: linear-gradient(90deg, #fcb1fc 0%, #d4fc79 100%);
+      color: #4b4453;
+      outline: none;
+    }
+    @media (max-width: 550px) {
+      .container {
+        min-width: unset;
+        width: 98vw;
+        max-width: 355px;
+        padding: 14px 4vw 18px;
+      }
+      .board {
+        grid-template: repeat(3, 21vw) / repeat(3, 21vw);
+        gap: 8px;
+      }
+      .scoreboard {
+        font-size: 1rem;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic-Tac-Toe</h1>
+    <div class="scoreboard">
+      <div class="score" id="scoreX">X Wins: 0</div>
+      <div class="score" id="scoreO">O Wins: 0</div>
+      <div class="score" id="scoreD">Draws: 0</div>
+    </div>
+    <div class="status" id="status">Player X's turn</div>
+    <div class="board" id="board">
+      <!-- 9 cells will go here -->
+    </div>
+    <div class="buttons">
+      <button id="replayBtn">Replay</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </div>
+  <script>
+    // Game variables
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let scores = { X: 0, O: 0, D: 0 };
+    let gameActive = true;
+
+    const winPatterns = [
+      [0,1,2], [3,4,5], [6,7,8], // rows
+      [0,3,6], [1,4,7], [2,5,8], // columns
+      [0,4,8], [2,4,6]           // diagonals
+    ];
+
+    const boardDiv = document.getElementById('board');
+    const statusDiv = document.getElementById('status');
+    const scoreX = document.getElementById('scoreX');
+    const scoreO = document.getElementById('scoreO');
+    const scoreD = document.getElementById('scoreD');
+    const replayBtn = document.getElementById('replayBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Create board cells
+    function drawBoard() {
+      boardDiv.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('button');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        cell.disabled = !gameActive || board[i] !== '';
+        cell.innerText = board[i];
+        cell.addEventListener('click', handleCellClick);
+        boardDiv.appendChild(cell);
+      }
+    }
+
+    // Check for winner
+    function checkWinner() {
+      for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (
+          board[a] &&
+          board[a] === board[b] &&
+          board[a] === board[c]
+        ) {
+          return { winner: board[a], pattern };
+        }
+      }
+      if (board.every(cell => cell)) {
+        return { winner: null, pattern: null }; // Draw
+      }
+      return null; // No winner yet
+    }
+
+    // Handle cell clicks
+    function handleCellClick(e) {
+      const idx = +e.target.dataset.index;
+      if (!gameActive || board[idx]) return;
+
+      board[idx] = currentPlayer;
+      drawBoard();
+
+      const result = checkWinner();
+      if (result && result.winner) {
+        gameActive = false;
+        scores[result.winner]++;
+        showWinningPattern(result.pattern);
+        updateScoreboard();
+        statusDiv.innerText = `Player ${result.winner} wins!`;
+      } else if (result && result.winner === null) {
+        gameActive = false;
+        scores.D++;
+        updateScoreboard();
+        statusDiv.innerText = "It's a draw!";
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusDiv.innerText = `Player ${currentPlayer}'s turn`;
+      }
+      drawBoard();
+    }
+
+    // Highlight winning pattern
+    function showWinningPattern(pattern) {
+      setTimeout(() => {
+        pattern.forEach(idx => {
+          boardDiv.children[idx].classList.add('winning');
+        });
+      }, 50);
+    }
+
+    // Update scores UI
+    function updateScoreboard() {
+      scoreX.innerText = `X Wins: ${scores.X}`;
+      scoreO.innerText = `O Wins: ${scores.O}`;
+      scoreD.innerText = `Draws: ${scores.D}`;
+    }
+
+    // Replay (continue scoreboard)
+    function replayGame() {
+      board = ['', '', '', '', '', '', '', '', ''];
+      gameActive = true;
+      currentPlayer = (scores.X + scores.O + scores.D) % 2 === 0 ? 'X' : 'O';
+      statusDiv.innerText = `Player ${currentPlayer}'s turn`;
+      drawBoard();
+    }
+
+    // Reset everything
+    function resetGame() {
+      board = ['', '', '', '', '', '', '', '', ''];
+      gameActive = true;
+      currentPlayer = 'X';
+      scores = { X: 0, O: 0, D: 0 };
+      updateScoreboard();
+      statusDiv.innerText = `Player X's turn`;
+      drawBoard();
+    }
+
+    // Initialize
+    replayBtn.addEventListener('click', replayGame);
+    resetBtn.addEventListener('click', resetGame);
+    drawBoard();
+    updateScoreboard();
+  </script>
+</body>
+</html>
