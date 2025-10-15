@@ -45,12 +45,6 @@ Building an accessible, keyboard-friendly interface was rewarding. Using CSS gra
 
 ---
 
-## Screenshots of Final Output
-
-![Game screenshot](Screenshot (182).png)
-
----
-
 ## How to Run
 
 - Clone or download this repository.
